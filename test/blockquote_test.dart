@@ -80,26 +80,34 @@ void defineTests() {
           (styleSheet.blockquoteDecoration as BoxDecoration?)!.borderRadius,
         );
 
-        /// this is a link
+        /// "this is a link: " - inherits paragraph style
         expect(styledTextParts[0].text, 'this is a link: ');
         expect(
           styledTextParts[0].style!.color,
           theme.textTheme.bodyMedium!.color,
         );
 
-        /// Markdown guide
+        /// "Markdown guide" - inherits link (a) style, not blockquote style
         expect(styledTextParts[1].text, 'Markdown guide');
-        expect(styledTextParts[1].style!.color, styleSheet.blockquote!.color);
+        expect(styledTextParts[1].style!.color, styleSheet.a!.color);
 
-        /// and this is
+        /// " and this is " - inherits paragraph style
+        expect(styledTextParts[2].text, ' and this is ');
         expect(
           styledTextParts[2].style!.color,
           theme.textTheme.bodyMedium!.color,
         );
 
-        /// bold
-        expect(styledTextParts[2].text, ' and this is bold and italic');
-        expect(styledTextParts[2].style!.fontWeight, FontWeight.w400);
+        /// "bold" - inherits strong style
+        expect(styledTextParts[3].text, 'bold');
+        expect(styledTextParts[3].style!.fontWeight, FontWeight.bold);
+
+        /// " and " - inherits paragraph style
+        expect(styledTextParts[4].text, ' and ');
+
+        /// "italic" - inherits em style
+        expect(styledTextParts[5].text, 'italic');
+        expect(styledTextParts[5].style!.fontStyle, FontStyle.italic);
       },
     );
   });

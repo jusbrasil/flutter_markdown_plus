@@ -176,7 +176,6 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
   String? _currentBlockTag;
   String? _lastVisitedTag;
-  bool _isInBlockquote = false;
 
   /// Returns widgets that display the given Markdown nodes.
   ///
@@ -187,7 +186,6 @@ class MarkdownBuilder implements md.NodeVisitor {
     _tables.clear();
     _inlines.clear();
     _linkHandlers.clear();
-    _isInBlockquote = false;
 
     builders.forEach((String key, MarkdownElementBuilder value) {
       if (value.isBlockElement()) {
@@ -206,7 +204,6 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     assert(_tables.isEmpty);
     assert(_inlines.isEmpty);
-    assert(!_isInBlockquote);
     return _blocks.single.children;
   }
 
@@ -233,8 +230,6 @@ class MarkdownBuilder implements md.NodeVisitor {
         if (element.attributes['start'] != null) {
           start = int.parse(element.attributes['start']!) - 1;
         }
-      } else if (tag == 'blockquote') {
-        _isInBlockquote = true;
       } else if (tag == 'table') {
         _tables.add(_TableElement());
       } else if (tag == 'tr') {
@@ -358,7 +353,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     } else {
       child = _buildRichText(
         TextSpan(
-          style: _isInBlockquote ? styleSheet.blockquote : _inlines.last.style,
+          style: _inlines.last.style,
           text: trimText(text.text),
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
         ),
@@ -459,7 +454,6 @@ class MarkdownBuilder implements md.NodeVisitor {
           child = _buildTable();
         }
       } else if (tag == 'blockquote') {
-        _isInBlockquote = false;
         child = DecoratedBox(
           decoration: styleSheet.blockquoteDecoration!,
           child: Padding(
